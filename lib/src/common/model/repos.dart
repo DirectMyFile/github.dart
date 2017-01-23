@@ -350,8 +350,16 @@ class BranchProtection {
   static BranchProtection fromJSON(Map<String, dynamic> input) {
     var branchProtection = new BranchProtection()
       ..requiredStatusChecks = RequiredStatusChecks
-          .fromJson(input['required_status_checks'] as Map<String, dynamic>);
+          .fromJSON(input['required_status_checks'] as Map<String, dynamic>);
     return branchProtection;
+  }
+}
+
+class Restrictions {
+  Map<String, dynamic> toMap() {
+    return {
+      'restrictions': {}
+    };
   }
 }
 
@@ -360,7 +368,7 @@ class RequiredStatusChecks {
   bool strict;
   bool includeAdmins;
 
-  static RequiredStatusChecks fromJson(Map<String, dynamic> input) {
+  static RequiredStatusChecks fromJSON(Map<String, dynamic> input) {
     var requiredStatusChecks = new RequiredStatusChecks()
       ..strict = input['strict']
       ..includeAdmins = input['include_admins']
@@ -368,6 +376,18 @@ class RequiredStatusChecks {
 
     return requiredStatusChecks;
   }
+
+  Map toMap() {
+    return {
+      'required_status_checks': {
+        'strict': strict,
+        'include_admins': includeAdmins,
+        'contexts': contexts
+      }
+    };
+  }
+
+  String toJson() => JSON.encode(toMap());
 }
 
 /// A Breakdown of the Languages a repository uses.

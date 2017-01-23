@@ -163,6 +163,21 @@ void main() {
       expect(result.requiredStatusChecks.includeAdmins, isTrue);
       expect(result.requiredStatusChecks.strict, isTrue);
     });
+
+    test('update protection', () async {
+      var contexts = ['someContext', 'anotherContext'];
+      var requiredStatusChecks = new RequiredStatusChecks()
+        ..strict = false
+        ..includeAdmins = true
+        ..contexts = contexts;
+
+      var restrictions = new Restrictions();
+
+      var result = await github.git.updateBranchProtection(
+          slug, 'master', requiredStatusChecks, restrictions);
+
+      expect(result, isTrue);
+    });
   });
 }
 

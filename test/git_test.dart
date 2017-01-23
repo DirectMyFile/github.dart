@@ -291,6 +291,28 @@ void main() {
 
   group('updateBranchProtection', () {
     var branchName = 'branchName';
+    test('constructs correct path', () {
+      var requiredStatusChecks = new RequiredStatusChecks()
+        ..contexts = ['someContext']
+        ..strict = true
+        ..includeAdmins = true;
+
+      var restrictions = new Restrictions();
+
+      var expectedResponse = new http.Response('{}', StatusCodes.OK);
+      when(github.request('PUT', '/repos/o/n/branches/$branchName/protection',
+              body: any, preview: any))
+          .thenReturn(expectedResponse);
+
+      git.updateBranchProtection(
+          repo, branchName, requiredStatusChecks, restrictions);
+
+      var verif = verify(github.request(captureAny, captureAny,
+              body: captureAny, preview: captureAny))
+          .captured;
+
+      expect(verif, 12);
+    });
   });
 
   group('getBranchProtection', () {

@@ -8,6 +8,7 @@ import "dart:convert" show BASE64, JSON, UTF8;
 import "package:html/dom.dart" as html;
 import "package:html/parser.dart" as html_parser;
 import "package:http/http.dart" as http;
+import 'package:http/http.dart';
 import "package:quiver/async.dart" show FutureGroup;
 import "package:xml/xml.dart" as xml;
 

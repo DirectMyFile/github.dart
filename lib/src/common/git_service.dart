@@ -169,4 +169,24 @@ class GitService extends Service {
         preview: 'application/vnd.github.loki-preview+json',
         convert: BranchProtection.fromJSON) as Future<BranchProtection>;
   }
+
+  Future<bool> updateBranchProtection(
+      RepositorySlug slug,
+      String branchName,
+      RequiredStatusChecks requiredStatusChecks,
+      Restrictions restrictions) async {
+    var body = {}
+      ..addAll(requiredStatusChecks.toMap())
+      ..addAll(restrictions.toMap());
+
+    var path = '/repos/${slug.fullName}/branches/$branchName/protection';
+    var r = await _github.request('PUT', path,
+        preview: 'application/vnd.github.loki-preview+json',
+        body: JSON.encode(body));
+
+    if (r.statusCode != StatusCodes.OK) {
+      print(r.body);
+    }
+    return r.statusCode == StatusCodes.OK;
+  }
 }
