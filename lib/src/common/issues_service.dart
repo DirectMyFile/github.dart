@@ -251,7 +251,16 @@ class IssuesService extends Service {
     );
   }
 
-  // TODO: Implement editComment: https://developer.github.com/v3/issues/comments/#edit-a-comment
+  /// Updates an issue comment
+  ///
+  /// API docs: https://docs.github.com/en/rest/reference/issues#update-an-issue-comment
+  Future<bool> updateComment(RepositorySlug slug, int id, String body) {
+    final it = GitHubJson.encode({'body': body});
+    return github
+        .request('PATCH', '/repos/${slug.fullName}/issues/comments/$id',
+            body: it)
+        .then((response) => response.statusCode == StatusCodes.OK);
+  }
 
   /// Deletes an issue comment.
   ///
@@ -370,7 +379,15 @@ class IssuesService extends Service {
         .then((response) => response.statusCode == StatusCodes.NO_CONTENT);
   }
 
-  // TODO: Implement listLabelsByMilestone: https://developer.github.com/v3/issues/labels/#get-labels-for-every-issue-in-a-milestone
+  /// Get labels for issues in a milestone
+  ///
+  /// API docs: https://docs.github.com/en/rest/reference/issues#list-labels-for-issues-in-a-milestone
+  Stream<IssueLabel> listLabelsByMilestone(RepositorySlug slug, int number) {
+    return PaginationHelper(github).objects(
+        'GET',
+        '/repos/${slug.fullName}/milestones/$number/labels',
+        (i) => IssueLabel.fromJson(i));
+  }
 
   /// Lists all milestones for a repository.
   ///
@@ -382,7 +399,13 @@ class IssuesService extends Service {
         (dynamic i) => Milestone.fromJson(i));
   }
 
-  // TODO: Implement getMilestone: https://developer.github.com/v3/issues/milestones/#get-a-single-milestone
+  /// Fetches a single milestone
+  ///
+  /// API docs: https://docs.github.com/en/rest/reference/issues#get-a-milestone
+  Future<Milestone> getMilestone(RepositorySlug slug, int number) {
+    return github.getJSON('/repos/${slug.fullName}/milestones/$number',
+        convert: (i) => Milestone.fromJson(i));
+  }
 
   /// Creates a new milestone on the specified repository.
   ///
@@ -394,7 +417,16 @@ class IssuesService extends Service {
         convert: (dynamic i) => Milestone.fromJson(i));
   }
 
-  // TODO: Implement editMilestone: https://developer.github.com/v3/issues/milestones/#update-a-milestone
+  /// Updates a milestone
+  ///
+  /// API docs: https://docs.github.com/en/rest/reference/issues#update-a-milestone
+  Future<bool> updateMilestone(RepositorySlug slug, int number, String title) {
+    final it = GitHubJson.encode({'title': title});
+    return github
+        .request('PATCH', '/repos/${slug.fullName}/milestones/$number',
+            body: it)
+        .then((response) => response.statusCode == StatusCodes.OK);
+  }
 
   /// Deletes a milestone.
   ///
